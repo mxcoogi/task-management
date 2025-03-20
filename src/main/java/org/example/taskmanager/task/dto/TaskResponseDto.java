@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ResponseDto {
+public class TaskResponseDto {
     private Long id;
     private String taskName;
     private String authorName;

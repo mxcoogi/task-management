@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class RequestDto {
+public class TaskRequestDto {
 
     private String taskName;
     private String authorName;
