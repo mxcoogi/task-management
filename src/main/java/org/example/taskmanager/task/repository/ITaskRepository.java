@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface ITaskRepository {
 
-    Optional<Task> findTaskByID(Long id);
+    Optional<Task> findTaskById(Long id);
+    Task findTaskByIdOrElseThrow(Long id);
     TaskResponseDto saveTask(Task task);
 }

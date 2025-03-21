@@ -5,10 +5,7 @@ import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.service.ITaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/tasks")
@@ -26,5 +23,12 @@ public class TaskController {
             @RequestBody TaskRequestDto dto
     ) {
         return new ResponseEntity<>(taskService.saveTask(dto), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskResponseDto> findTaskById(
+            @PathVariable Long id
+    ){
+        return new ResponseEntity<>(taskService.findTaskById(id), HttpStatus.OK);
     }
 }

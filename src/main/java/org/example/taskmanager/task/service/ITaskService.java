@@ -6,5 +6,5 @@ import org.example.taskmanager.task.dto.TaskResponseDto;
 public interface ITaskService {
 
     TaskResponseDto saveTask(TaskRequestDto dto);
-
+    TaskResponseDto findTaskById(Long id);
 }
