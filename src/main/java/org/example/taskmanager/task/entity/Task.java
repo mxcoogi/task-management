@@ -22,11 +22,4 @@ public class Task {
         this.password = password;
     }
 
-    public Task(Long id, String taskName, String authorName, LocalDate created_at, LocalDate updated_at){
-        this.id = id;
-        this.taskName = taskName;
-        this.authorName = authorName;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-    }
 }
