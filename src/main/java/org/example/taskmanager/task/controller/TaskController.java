@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
@@ -26,9 +28,16 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> findTaskById(
+    public ResponseEntity<TaskResponseDto> findTask(
             @PathVariable Long id
     ){
-        return new ResponseEntity<>(taskService.findTaskById(id), HttpStatus.OK);
+        return new ResponseEntity<>(taskService.findTaskByIdOrElseThrow(id), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TaskResponseDto>> findTaskAll(
+            @RequestBody TaskRequestDto dto
+    ){
+        return new ResponseEntity<>(taskService.findTaskAll(dto), HttpStatus.OK);
     }
 }

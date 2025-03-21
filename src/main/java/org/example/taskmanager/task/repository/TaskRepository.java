@@ -39,6 +39,11 @@ public class TaskRepository implements ITaskRepository{
         return result.stream().findAny().orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @Override
+    public List<Task> findTaskAll() {
+        return jdbcTemplate.query("select * from task", taskRowMapper());
+    }
+
 
     @Override
     public TaskResponseDto saveTask(Task task) {
