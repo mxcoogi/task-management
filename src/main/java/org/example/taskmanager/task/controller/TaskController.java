@@ -20,6 +20,11 @@ public class TaskController {
     }
 
 
+    /**
+     *
+     * @param dto TaskRequestDto
+     * @return TaskResponseDto, HttpStatus
+     */
     @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(
             @RequestBody TaskRequestDto dto
@@ -27,6 +32,11 @@ public class TaskController {
         return new ResponseEntity<>(taskService.saveTask(dto), HttpStatus.CREATED);
     }
 
+    /**
+     * id값으로 task 단건 조회
+     * @param id task 식별자
+     * @return TaskResponseDto, HttpStatus
+     */
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> findTask(
             @PathVariable Long id
@@ -34,6 +44,11 @@ public class TaskController {
         return new ResponseEntity<>(taskService.findTaskByIdOrElseThrow(id), HttpStatus.OK);
     }
 
+    /**
+     * authorName, updated_at 으로 task 전체 조회
+     * @param dto authorName, updated_at
+     * @return List<TaskResponseDto>
+     */
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> findTaskAll(
             @RequestBody TaskRequestDto dto
