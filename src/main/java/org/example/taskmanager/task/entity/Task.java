@@ -14,4 +14,10 @@ public class Task {
     private String password;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
+
+    public Task(String taskName, String authorName, String password){
+        this.taskName = taskName;
+        this.authorName = authorName;
+        this.password = password;
+    }
 }
