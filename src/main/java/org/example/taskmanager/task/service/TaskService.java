@@ -100,6 +100,14 @@ public class TaskService implements ITaskService {
 
     }
 
+    @Override
+    public void deleteTask(Long id) {
+        int row = taskRepository.deleteTask(id);
+        if(row == 0){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
     private TaskResponseDto toResponseDto(Task task){
 
         return new TaskResponseDto(task.getId(), task.getTaskName(), task.getAuthorName(), task.getCreated_at(), task.getUpdated_at());

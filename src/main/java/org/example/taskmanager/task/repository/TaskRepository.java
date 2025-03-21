@@ -69,6 +69,12 @@ public class TaskRepository implements ITaskRepository{
         return jdbcTemplate.update("UPDATE task SET taskName = ?, authorName = ?, updated_at = ? WHERE id = ?", taskName, authorName, update_at ,id);
     }
 
+    @Override
+    public int deleteTask(Long id) {
+
+        return jdbcTemplate.update("delete from task where id = ?", id);
+    }
+
 
     private RowMapper<Task> taskRowMapper(){
         return new RowMapper<Task>() {
