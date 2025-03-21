@@ -67,10 +67,9 @@ public class TaskService implements ITaskService {
         //비교 및 대입
         List<TaskResponseDto> result;
         result = allTask.stream()
-                .filter(s-> updated_at.isEqual(s.getUpdated_at()))
-                .filter(s -> authorName.equals(s.getAuthorName()))
+                .filter(s-> updated_at==null|| updated_at.isEqual(s.getUpdated_at())) //1번 필터
+                .filter(s -> authorName == null || authorName.equals(s.getAuthorName())) //2번 필터
                 .map(this::toResponseDto).toList();
-
         return result;
     }
     //전제조회 조건 해야댐 RequestTask에서 날짜형식 받는거 생각해야댐
