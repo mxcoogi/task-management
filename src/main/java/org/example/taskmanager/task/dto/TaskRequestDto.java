@@ -1,9 +1,10 @@
 package org.example.taskmanager.task.dto;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Getter
 public class TaskRequestDto {
@@ -11,6 +12,6 @@ public class TaskRequestDto {
     private String taskName;
     private String authorName;
     private String password;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    private LocalDate created_at;
+    private LocalDate updated_at;
 }

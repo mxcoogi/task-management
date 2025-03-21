@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -53,8 +54,8 @@ public class TaskRepository implements ITaskRepository{
         parameters.put("authorName", task.getAuthorName());
         parameters.put("taskName", task.getTaskName());
         parameters.put("password", task.getPassword());
-        LocalDateTime created_at  = LocalDateTime.now();
-        LocalDateTime updated_at  = LocalDateTime.now();
+        LocalDate created_at  = LocalDate.now();
+        LocalDate updated_at  = LocalDate.now();
         parameters.put("created_at", created_at);
         parameters.put("updated_at", updated_at);
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
@@ -65,14 +66,13 @@ public class TaskRepository implements ITaskRepository{
         return new RowMapper<Task>() {
             @Override
             public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
-                LocalDateTime created_at = rs.getTimestamp("created_at").toLocalDateTime();
-                LocalDateTime updated_at = rs.getTimestamp("updated_at").toLocalDateTime();
+
                 return new Task(
                         rs.getLong("id"),
                         rs.getString("taskName"),
                         rs.getString("authorName"),
-                        created_at,
-                        updated_at
+                        rs.getDate("created_at").toLocalDate(),
+                        rs.getDate("updated_at").toLocalDate()
                 );
             }
         };

@@ -1,5 +1,6 @@
 package org.example.taskmanager.task.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.entity.Task;
@@ -15,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class TaskService implements ITaskService {
 
@@ -55,14 +57,20 @@ public class TaskService implements ITaskService {
 
     @Override
     public List<TaskResponseDto> findTaskAll(TaskRequestDto dto) {
+        //요청값 가져오기
         String authorName = dto.getAuthorName();
-        LocalDateTime updated_at = dto.getUpdated_at();
-        LocalDate date = updated_at.toLocalDate();
+        LocalDate updated_at = dto.getUpdated_at();
+
+        //레포에서 리스트 가져오기
         List<Task> allTask = taskRepository.findTaskAll();
+
+        //비교 및 대입
         List<TaskResponseDto> result;
         result = allTask.stream()
-                .filter(s-> date.isEqual(s.getUpdated_at().toLocalDate()) && authorName.equals(s.getAuthorName()))
+                .filter(s-> updated_at.isEqual(s.getUpdated_at()))
+                .filter(s -> authorName.equals(s.getAuthorName()))
                 .map(this::toResponseDto).toList();
+
         return result;
     }
     //전제조회 조건 해야댐 RequestTask에서 날짜형식 받는거 생각해야댐
