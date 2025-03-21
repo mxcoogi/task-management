@@ -6,7 +6,9 @@ import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.entity.Task;
 import org.example.taskmanager.task.repository.ITaskRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -37,7 +39,7 @@ public class TaskService implements ITaskService {
     @Override
     public TaskResponseDto findTaskByIdOrElseThrow(Long id) {
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        return new TaskResponseDto(task.getId(), task.getTaskName(), task.getAuthorName(), task.getCreated_at(), task.getUpdated_at());
+        return toResponseDto(task);
     }
     /**
      *
@@ -72,10 +74,40 @@ public class TaskService implements ITaskService {
                 .map(this::toResponseDto).toList();
         return result;
     }
-    //전제조회 조건 해야댐 RequestTask에서 날짜형식 받는거 생각해야댐
+
+    @Transactional
+    @Override
+    public TaskResponseDto updateTask(Long id, TaskRequestDto dto) {
+
+        String updateTaskName = dto.getTaskName();
+        String updateAuthorName = dto.getAuthorName();
+
+        Task task = taskRepository.findTaskByIdOrElseThrow(id);
+        if(!validPassword(task.getPassword(), dto.getPassword())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        if(updateTaskName == null){
+            updateTaskName = task.getTaskName();
+        }
+        if(updateAuthorName == null){
+            updateAuthorName = task.getAuthorName();
+        }
+        int row = taskRepository.updateTask(task.getId(), updateTaskName, updateAuthorName);
+        if(row == 0){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id));
+
+    }
 
     private TaskResponseDto toResponseDto(Task task){
+
         return new TaskResponseDto(task.getId(), task.getTaskName(), task.getAuthorName(), task.getCreated_at(), task.getUpdated_at());
+    }
+
+    private boolean validPassword(String taskPassword, String dtoPassword){
+        if(dtoPassword == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        return taskPassword.equals(dtoPassword);
     }
 
 

@@ -11,4 +11,5 @@ public interface ITaskService {
     TaskResponseDto findTaskById(Long id);
     TaskResponseDto findTaskByIdOrElseThrow(Long id);
     List<TaskResponseDto> findTaskAll(TaskRequestDto dto);
+    TaskResponseDto updateTask(Long id, TaskRequestDto dto);
 }

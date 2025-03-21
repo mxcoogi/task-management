@@ -13,4 +13,5 @@ public interface ITaskRepository {
     Task findTaskByIdOrElseThrow(Long id);
     List<Task> findTaskAll();
     TaskResponseDto saveTask(Task task);
+    int updateTask(Long id, String taskName, String authorName);
 }
