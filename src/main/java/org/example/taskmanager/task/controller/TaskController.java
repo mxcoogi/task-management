@@ -61,7 +61,7 @@ public class TaskController {
             @PathVariable Long id,
             @RequestBody TaskRequestDto dto
     ){
-        return new ResponseEntity<>(taskService.updateTask(id, dto), HttpStatus.OK);
+        return new ResponseEntity<>(taskService.updateTaskName(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

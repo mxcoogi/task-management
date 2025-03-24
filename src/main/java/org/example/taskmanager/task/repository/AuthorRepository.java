@@ -46,9 +46,11 @@ public class AuthorRepository implements IAuthorRepository{
     }
 
     @Override
-    public String getAuthorEmail(Long id) {
-        return "";
+    public int updateAuthorName(String email, String name) {
+        LocalDate update_at = LocalDate.now();
+        return jdbcTemplate.update("UPDATE author SET name = ?, updated_at = ? WHERE email = ?", name, update_at ,email);
     }
+
 
 
     private RowMapper<Author> authorRowMapper(){

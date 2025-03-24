@@ -92,9 +92,10 @@ public class TaskService implements ITaskService {
         return result;
     }
 
+
     @Transactional
     @Override
-    public TaskResponseDto updateTask(Long id, TaskRequestDto dto) {
+    public TaskResponseDto updateTaskName(Long id, TaskRequestDto dto) {
 
         String updateTaskName = dto.getTaskName();
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
@@ -105,7 +106,7 @@ public class TaskService implements ITaskService {
             updateTaskName = task.getTaskName();
         }
 
-        int row = taskRepository.updateTask(task.getId(), updateTaskName);
+        int row = taskRepository.updateTaskName(task.getId(), updateTaskName);
 
         if(row == 0){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

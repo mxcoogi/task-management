@@ -9,5 +9,5 @@ public interface IAuthorRepository {
 
     AuthorResponseDto saveAuthor(String email, String name);
     Optional<Author> getAuthor(String email);
-    String getAuthorEmail(Long id);
+    int updateAuthorName(String email, String name);
 }
