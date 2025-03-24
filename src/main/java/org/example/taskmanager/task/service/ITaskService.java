@@ -13,7 +13,7 @@ public interface ITaskService {
     TaskResponseDto findTaskById(Long id);
     TaskResponseDto findTaskByIdOrElseThrow(Long id);
     List<TaskResponseDto> findTaskAll(TaskRequestDto dto);
-    void deleteTask(Long id);
+    void deleteTask(Long id, TaskRequestDto dto);
     TaskResponseDto updateTaskName(Long id, TaskRequestDto dto);
     AuthorResponseDto updateAuthorName(AuthorRequestDto dto);
 }

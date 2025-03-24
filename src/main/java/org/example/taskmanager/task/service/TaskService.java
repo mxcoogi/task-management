@@ -135,7 +135,11 @@ public class TaskService implements ITaskService {
 
 
     @Override
-    public void deleteTask(Long id) {
+    public void deleteTask(Long id, TaskRequestDto dto) {
+        Task task = taskRepository.findTaskByIdOrElseThrow(id);
+        if(!validPassword(task.getPassword(), dto.getPassword())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         int row = taskRepository.deleteTask(id);
         if(row == 0){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

@@ -75,11 +75,12 @@ public class TaskController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTask(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestBody TaskRequestDto dto
     ) {
-        taskService.deleteTask(id);
+        taskService.deleteTask(id, dto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
