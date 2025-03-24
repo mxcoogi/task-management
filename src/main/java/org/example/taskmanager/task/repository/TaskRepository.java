@@ -12,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,7 @@ public class TaskRepository implements ITaskRepository{
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("task").usingGeneratedKeyColumns("id");
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("authorName", task.getAuthorName());
+        parameters.put("authorId", task.getAuthorId());
         parameters.put("taskName", task.getTaskName());
         parameters.put("password", task.getPassword());
         LocalDate created_at  = LocalDate.now();
@@ -60,14 +59,17 @@ public class TaskRepository implements ITaskRepository{
         parameters.put("created_at", created_at);
         parameters.put("updated_at", updated_at);
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
-        return new TaskResponseDto(key.longValue(), task.getTaskName(), task.getAuthorName(), created_at, updated_at);
+
+        return new TaskResponseDto(key.longValue(), task.getTaskName(), task.getAuthorId(), created_at, updated_at);
     }
 
     @Override
-    public int updateTask(Long id, String taskName, String authorName) {
+    public int updateTaskName(Long id, String taskName) {
         LocalDate update_at = LocalDate.now();
-        return jdbcTemplate.update("UPDATE task SET taskName = ?, authorName = ?, updated_at = ? WHERE id = ?", taskName, authorName, update_at ,id);
+        return jdbcTemplate.update("UPDATE task SET taskName = ?, updated_at = ? WHERE id = ?", taskName, update_at ,id);
     }
+
+
 
     @Override
     public int deleteTask(Long id) {
@@ -84,7 +86,7 @@ public class TaskRepository implements ITaskRepository{
                 return new Task(
                         rs.getLong("id"),
                         rs.getString("taskName"),
-                        rs.getString("authorName"),
+                        rs.getLong("authorId"),
                         rs.getString("password"),
                         rs.getDate("created_at").toLocalDate(),
                         rs.getDate("updated_at").toLocalDate()

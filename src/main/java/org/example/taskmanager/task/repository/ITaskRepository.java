@@ -13,6 +13,6 @@ public interface ITaskRepository {
     Task findTaskByIdOrElseThrow(Long id);
     List<Task> findTaskAll();
     TaskResponseDto saveTask(Task task);
-    int updateTask(Long id, String taskName, String authorName);
+    int updateTaskName(Long id, String taskName);
     int deleteTask(Long id);
 }

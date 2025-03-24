@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 public class Task {
     private Long id;
     private String taskName;
-    private String authorName;
+    private Long authorId;
     private String password;
     private LocalDate created_at;
     private LocalDate updated_at;
 
-    public Task(String taskName, String authorName, String password){
+    public Task(String taskName, String password, Long authorId){
         this.taskName = taskName;
-        this.authorName = authorName;
+        this.authorId = authorId;
         this.password = password;
     }
 

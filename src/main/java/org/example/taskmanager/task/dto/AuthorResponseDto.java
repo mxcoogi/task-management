@@ -1,18 +1,17 @@
 package org.example.taskmanager.task.dto;
 
-
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
 
-
+@AllArgsConstructor
 @Getter
-public class TaskRequestDto {
+public class AuthorResponseDto {
 
-    private String taskName;
-    private String authorName;
-    private String authorEmail;
-    private String password;
+    private Long id;
+    private String name;
+    private String email;
     private LocalDate created_at;
     private LocalDate updated_at;
 }
