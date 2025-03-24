@@ -1,5 +1,7 @@
 package org.example.taskmanager.task.service;
 
+import org.example.taskmanager.task.dto.AuthorRequestDto;
+import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 
@@ -13,4 +15,5 @@ public interface ITaskService {
     List<TaskResponseDto> findTaskAll(TaskRequestDto dto);
     void deleteTask(Long id);
     TaskResponseDto updateTaskName(Long id, TaskRequestDto dto);
+    AuthorResponseDto updateAuthorName(AuthorRequestDto dto);
 }

@@ -1,6 +1,7 @@
 package org.example.taskmanager.task.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.taskmanager.task.dto.AuthorRequestDto;
 import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
@@ -9,6 +10,7 @@ import org.example.taskmanager.task.entity.Task;
 import org.example.taskmanager.task.repository.IAuthorRepository;
 import org.example.taskmanager.task.repository.ITaskRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -114,6 +116,23 @@ public class TaskService implements ITaskService {
         return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id));
 
     }
+
+    @Override
+    public AuthorResponseDto updateAuthorName(AuthorRequestDto dto){
+        String email = dto.getEmail();
+        String name = dto.getName();
+        int row = authorRepository.updateAuthorName(email, name);
+        if(row == 0){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Optional<Author> author = authorRepository.getAuthor(email);
+        if(author.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Author responseAuthor = author.get();
+        return new AuthorResponseDto(responseAuthor.getId(), responseAuthor.getName(), responseAuthor.getEmail(), responseAuthor.getCreated_at(), responseAuthor.getUpdated_at());
+    }
+
 
     @Override
     public void deleteTask(Long id) {
