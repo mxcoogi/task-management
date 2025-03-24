@@ -65,9 +65,9 @@ public class TaskRepository implements ITaskRepository{
     }
 
     @Override
-    public int updateTask(Long id, String taskName, String authorName) {
+    public int updateTask(Long id, String taskName) {
         LocalDate update_at = LocalDate.now();
-        return jdbcTemplate.update("UPDATE task SET taskName = ?, authorName = ?, updated_at = ? WHERE id = ?", taskName, authorName, update_at ,id);
+        return jdbcTemplate.update("UPDATE task SET taskName = ?, updated_at = ? WHERE id = ?", taskName, update_at ,id);
     }
 
     @Override

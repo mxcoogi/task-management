@@ -97,8 +97,6 @@ public class TaskService implements ITaskService {
     public TaskResponseDto updateTask(Long id, TaskRequestDto dto) {
 
         String updateTaskName = dto.getTaskName();
-        String updateAuthorName = dto.getAuthorName();
-
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
         if(!validPassword(task.getPassword(), dto.getPassword())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -106,10 +104,9 @@ public class TaskService implements ITaskService {
         if(updateTaskName == null){
             updateTaskName = task.getTaskName();
         }
-        if(updateAuthorName == null){
-            //updateAuthorName = task.getAuthorName();
-        }
-        int row = taskRepository.updateTask(task.getId(), updateTaskName, updateAuthorName);
+
+        int row = taskRepository.updateTask(task.getId(), updateTaskName);
+
         if(row == 0){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
