@@ -41,8 +41,7 @@ public class AuthorRepository implements IAuthorRepository{
 
     @Override
     public Optional<Author> getAuthor(String email) {
-        Optional<Author> author = jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email).stream().findAny();
-        return author;
+        return jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email).stream().findAny();
     }
 
     @Override

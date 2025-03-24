@@ -58,6 +58,15 @@ public class TaskController {
     ) {
         return new ResponseEntity<>(taskService.findTaskAll(dto), HttpStatus.OK);
     }
+    @GetMapping("/page/{page}")
+    public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
+            @PathVariable Long page,
+            @RequestBody AuthorRequestDto dto
+    ){
+        return new ResponseEntity<>(taskService.findTaskByPage(page, dto.getEmail()), HttpStatus.OK);
+    }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTaskName(
