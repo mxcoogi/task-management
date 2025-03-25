@@ -68,23 +68,16 @@ public class TaskService implements ITaskService {
     public List<TaskResponseDto> findTaskAll(TaskRequestDto dto) {
         //요청값 가져오기
         String authorEmail = dto.getAuthorEmail();
-        LocalDate updated_at = dto.getUpdated_at();
 
+        //레포에서 작성자 정보 가져오기
+        Author author = authorRepository.getAuthor(authorEmail);
         //레포에서 리스트 가져오기
         List<Task> allTask = taskRepository.findTaskAll();
-        Optional<Author> author = authorRepository.getAuthor(authorEmail); //id가 null값이면..? 그냥 무시하고 조회한다
-        Long authorId;
-        if(author.isEmpty()){
-            authorId = null;
-        }else{
-            authorId = author.get().getId();
-        }
         //비교 및 대입
         List<TaskResponseDto> result;
         result = allTask.stream()
-                .filter(s-> updated_at==null || updated_at.equals("")|| updated_at.isEqual(s.getUpdated_at())) //1번 필터
-                .filter(s -> authorId == null || authorId.equals(s.getAuthorId())) //2번 필터
-                .map(this::toResponseDto).toList();
+                .filter(s -> authorEmail == null || authorEmail.equals(s.getAuthorEmail())) //2번 필터
+                .map((Task task) -> toResponseDto(task, author.getName())).toList();
         return result;
     }
 
@@ -96,7 +89,7 @@ public class TaskService implements ITaskService {
         }
         Long id = author.get().getId();
         List<Task> taskList = taskRepository.findTaskByPage(page, id);
-        return taskList.stream().map(this::toResponseDto).toList();
+        return taskList.stream().map((Task task) -> toResponseDto(task, )).toList();
     }
 
 
@@ -153,9 +146,9 @@ public class TaskService implements ITaskService {
         }
     }
 
-    private TaskResponseDto toResponseDto(Task task){
+    private TaskResponseDto toResponseDto(Task task, String authorName){
 
-        return new TaskResponseDto(task.getId(), task.getTaskName(), task.getAuthorId(), task.getCreated_at(), task.getUpdated_at());
+        return new TaskResponseDto(task.getId(), task.getTaskName(), authorName ,task.getAuthorEmail(), task.getCreated_at(), task.getUpdated_at());
     }
 
 

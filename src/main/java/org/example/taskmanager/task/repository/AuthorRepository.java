@@ -67,8 +67,10 @@ public class AuthorRepository implements IAuthorRepository {
 
 
     @Override
-    public Optional<Author> getAuthor(String email) {
-        return jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email).stream().findAny();
+    public Author getAuthor(String email) {
+
+        return jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email)
+                    .stream().findAny().orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 이메일"));
     }
 
     @Override

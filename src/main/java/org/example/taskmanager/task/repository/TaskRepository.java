@@ -46,7 +46,6 @@ public class TaskRepository implements ITaskRepository {
     public List<Task> findTaskAll() {
         return jdbcTemplate.query("select * from task", taskRowMapper());
     }
-
     @Override
     public List<Task> findTaskByPage(Long page, Long id) {
         int limit = 5;
