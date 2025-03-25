@@ -60,6 +60,12 @@ public class TaskController {
 //        return new ResponseEntity<>(taskService.findTaskAll(dto), HttpStatus.OK);
 //    }
 
+    /**
+     *
+     * @param page 볼 페이지
+     * @param dto 조회할 작성자 이메일
+     * @return
+     */
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
             @RequestParam Long page,

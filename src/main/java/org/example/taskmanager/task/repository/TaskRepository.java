@@ -23,6 +23,7 @@ import java.util.Optional;
 public class TaskRepository implements ITaskRepository {
 
 
+    private static final int LIMIT = 5;
     private final JdbcTemplate jdbcTemplate;
 
     public TaskRepository(JdbcTemplate jdbcTemplate) {
@@ -48,10 +49,9 @@ public class TaskRepository implements ITaskRepository {
     }
     @Override
     public List<Task> findTaskByPage(Long page, String email) {
-        int limit = 5;
-        Long offset = (page - 1) * limit;
+        Long offset = (page - 1) * LIMIT;
         String query = "SELECT * FROM task WHERE authorEmail = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(query, taskRowMapper(), email, limit, offset);
+        return jdbcTemplate.query(query, taskRowMapper(), email, LIMIT, offset);
 
     }
 
