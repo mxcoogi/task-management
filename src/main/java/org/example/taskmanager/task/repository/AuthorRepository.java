@@ -2,7 +2,12 @@ package org.example.taskmanager.task.repository;
 
 import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.entity.Author;
+import org.example.taskmanager.task.exception.AlreadyExistEmailException;
+import org.example.taskmanager.task.exception.EmailNotFoundException;
+import org.example.taskmanager.task.exception.InvalidPasswordException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,6 +27,7 @@ import java.util.Optional;
 public class AuthorRepository implements IAuthorRepository {
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public AuthorRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -30,10 +36,10 @@ public class AuthorRepository implements IAuthorRepository {
     public Author saveAuthor(String email, String password, String name) {
 
         try {
-            vertifyAuthorByEmail(email);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 email 입니다");
-        } catch (RuntimeException e) {
-
+            Long id = vertifyAuthorByEmail(email);
+            //throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 email 입니다");
+            throw new AlreadyExistEmailException();
+        } catch (EmptyResultDataAccessException e) {
             SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
             jdbcInsert.withTableName("author").usingGeneratedKeyColumns("id");
             Map<String, Object> parameters = new HashMap<>();
@@ -51,16 +57,15 @@ public class AuthorRepository implements IAuthorRepository {
     }
 
     private Long vertifyAuthorByEmail(String email) throws RuntimeException {
-
         return jdbcTemplate.queryForObject("select id from author where email = ?", Long.class, email);
     }
 
     @Override
     public Author vertifyAuthorByEmailPassword(String email, String password){
         Author author = jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email)
-                .stream().findAny().orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 이메일"));
+                .stream().findAny().orElseThrow(()->new EmailNotFoundException());
         if(!author.getPassword().equals(password)){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "비밀번호가 틀림");
+            throw new InvalidPasswordException();
         }
         return author;
     }
@@ -70,7 +75,7 @@ public class AuthorRepository implements IAuthorRepository {
     public Author getAuthor(String email) {
 
         return jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email)
-                    .stream().findAny().orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 이메일"));
+                    .stream().findAny().orElseThrow(()-> new EmailNotFoundException());
     }
 
     @Override

@@ -1,25 +1,24 @@
 package org.example.taskmanager.task.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.example.taskmanager.task.dto.AuthorRequestDto;
-import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.entity.Author;
 import org.example.taskmanager.task.entity.Task;
+import org.example.taskmanager.task.exception.DeleteFailedException;
+import org.example.taskmanager.task.exception.EmailNotFoundException;
+import org.example.taskmanager.task.exception.TaskNotFoundException;
+import org.example.taskmanager.task.exception.UpdateFailedException;
 import org.example.taskmanager.task.repository.IAuthorRepository;
 import org.example.taskmanager.task.repository.ITaskRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-@Slf4j
+
+
 @Service
 public class TaskService implements ITaskService {
 
@@ -31,6 +30,7 @@ public class TaskService implements ITaskService {
         this.authorRepository = authorRepository;
     }
 
+    @Transactional
     @Override
     public TaskResponseDto createTask(TaskRequestDto dto) {
 
@@ -87,9 +87,8 @@ public class TaskService implements ITaskService {
         Author author = authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
 
         int row = taskRepository.updateTaskName(task.getId(), updateTaskName);
-
         if (row == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new UpdateFailedException();
         }
         return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id),author.getName());
     }
@@ -99,7 +98,10 @@ public class TaskService implements ITaskService {
     public void deleteTask(Long id, TaskRequestDto dto) {
         authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        taskRepository.deleteTask(id);
+        int row = taskRepository.deleteTask(id);
+        if(row == 0){
+            throw new DeleteFailedException();
+        }
 
     }
 

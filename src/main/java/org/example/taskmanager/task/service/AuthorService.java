@@ -3,6 +3,7 @@ package org.example.taskmanager.task.service;
 import org.example.taskmanager.task.dto.AuthorRequestDto;
 import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.entity.Author;
+import org.example.taskmanager.task.exception.EmailNotFoundException;
 import org.example.taskmanager.task.repository.IAuthorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class AuthorService implements IAuthorService{
         authorRepository.vertifyAuthorByEmailPassword(dto.getEmail(), dto.getPassword());
         int row = authorRepository.updateAuthorName(dto.getEmail(), dto.getName());
         if(row == 0){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "업데이트 실퍄");
+            throw new EmailNotFoundException();
         }
         Author author = authorRepository.getAuthor(dto.getEmail());
         return toAuthorResponse(author);

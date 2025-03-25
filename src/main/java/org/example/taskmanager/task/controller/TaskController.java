@@ -64,7 +64,7 @@ public class TaskController {
      *
      * @param page 볼 페이지
      * @param dto 조회할 작성자 이메일
-     * @return
+     * @return List<TaskResponseDto>
      */
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
