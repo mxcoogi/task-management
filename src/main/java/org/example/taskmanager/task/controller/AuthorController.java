@@ -6,10 +6,7 @@ import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.service.IAuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/author")
@@ -25,6 +22,13 @@ public class AuthorController {
     public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody AuthorRequestDto dto){
 
         return new ResponseEntity<>(authorService.createAuthor(dto), HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<AuthorResponseDto> updateAuthor(
+            @RequestBody AuthorRequestDto dto
+    ){
+        return new ResponseEntity<>(authorService.updateAuthor(dto), HttpStatus.OK);
     }
 
 

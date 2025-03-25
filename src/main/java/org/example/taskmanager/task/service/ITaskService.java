@@ -14,6 +14,5 @@ public interface ITaskService {
     List<TaskResponseDto> findTaskAll(TaskRequestDto dto);
     void deleteTask(Long id, TaskRequestDto dto);
     TaskResponseDto updateTaskName(Long id, TaskRequestDto dto);
-    AuthorResponseDto updateAuthorName(AuthorRequestDto dto);
     List<TaskResponseDto> findTaskByPage(Long page, String email);
 }

@@ -76,12 +76,6 @@ public class TaskController {
         return new ResponseEntity<>(taskService.updateTaskName(id, dto), HttpStatus.OK);
     }
 
-    @PutMapping("/author")
-    public ResponseEntity<AuthorResponseDto> updateAuthorName(
-            @RequestBody AuthorRequestDto dto //email 과 name 이 들어간 dto
-    ) {
-        return new ResponseEntity<>(taskService.updateAuthorName(dto), HttpStatus.OK);
-    }
 
 
     @DeleteMapping("/delete/{id}")

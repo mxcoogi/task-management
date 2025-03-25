@@ -70,13 +70,10 @@ public class TaskService implements ITaskService {
 
     @Override
     public List<TaskResponseDto> findTaskByPage(Long page, String email) {
-        Optional<Author> author = authorRepository.getAuthor(email); //id가 null값이면..? 그냥 무시하고 조회한다
-        if(author.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Long id = author.get().getId();
+        Author author = authorRepository.getAuthor(email); //id가 null값이면..? 그냥 무시하고 조회한다
+        Long id = author.getId();
         List<Task> taskList = taskRepository.findTaskByPage(page, id);
-        return taskList.stream().map((Task task) -> toResponseDto(task, )).toList();
+        return taskList.stream().map((Task task) -> toResponseDto(task, author.getName())).toList();
     }
 
 
@@ -101,24 +98,6 @@ public class TaskService implements ITaskService {
         return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id));
 
     }
-
-    @Override
-    public AuthorResponseDto updateAuthorName(AuthorRequestDto dto){
-        String email = dto.getEmail();
-        String name = dto.getName();
-        int row = authorRepository.updateAuthorName(email, name);
-        if(row == 0){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Optional<Author> author = authorRepository.getAuthor(email);
-        if(author.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Author responseAuthor = author.get();
-        return new AuthorResponseDto(responseAuthor.getId(), responseAuthor.getName(), responseAuthor.getEmail(), responseAuthor.getCreated_at(), responseAuthor.getUpdated_at());
-    }
-
-
 
 
     @Override

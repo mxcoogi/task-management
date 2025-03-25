@@ -11,4 +11,5 @@ public interface IAuthorRepository {
     Author getAuthor(String email);
     int updateAuthorName(String email, String name);
     Author vertifyAuthorByEmailPassword(String email, String password);
+
 }

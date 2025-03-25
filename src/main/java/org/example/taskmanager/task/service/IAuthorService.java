@@ -7,4 +7,5 @@ import org.springframework.http.ResponseEntity;
 public interface IAuthorService {
 
     AuthorResponseDto createAuthor(AuthorRequestDto dto);
+    AuthorResponseDto updateAuthor(AuthorRequestDto dto);
 }
