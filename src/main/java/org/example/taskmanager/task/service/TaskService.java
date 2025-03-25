@@ -45,7 +45,8 @@ public class TaskService implements ITaskService {
     @Override
     public TaskResponseDto findTaskByIdOrElseThrow(Long id) {
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        return toResponseDto(task);
+        Author author = authorRepository.getAuthor(task.getAuthorEmail());
+        return toResponseDto(task, author.getName());
     }
     /**
      *
