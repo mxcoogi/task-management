@@ -94,6 +94,17 @@ public class TaskService implements ITaskService {
         return result;
     }
 
+    @Override
+    public List<TaskResponseDto> findTaskByPage(Long page, String email) {
+        Optional<Author> author = authorRepository.getAuthor(email); //id가 null값이면..? 그냥 무시하고 조회한다
+        if(author.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Long id = author.get().getId();
+        List<Task> taskList = taskRepository.findTaskByPage(page, id);
+        return taskList.stream().map(this::toResponseDto).toList();
+    }
+
 
     @Transactional
     @Override
@@ -132,6 +143,8 @@ public class TaskService implements ITaskService {
         Author responseAuthor = author.get();
         return new AuthorResponseDto(responseAuthor.getId(), responseAuthor.getName(), responseAuthor.getEmail(), responseAuthor.getCreated_at(), responseAuthor.getUpdated_at());
     }
+
+
 
 
     @Override

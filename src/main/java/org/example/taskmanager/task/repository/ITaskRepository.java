@@ -12,7 +12,9 @@ public interface ITaskRepository {
     Optional<Task> findTaskById(Long id);
     Task findTaskByIdOrElseThrow(Long id);
     List<Task> findTaskAll();
+    List<Task> findTaskByPage(Long page, Long id);
     TaskResponseDto saveTask(Task task);
     int updateTaskName(Long id, String taskName);
     int deleteTask(Long id);
+
 }

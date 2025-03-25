@@ -1,4 +1,5 @@
 package org.example.taskmanager.task.repository;
+
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.entity.Task;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class TaskRepository implements ITaskRepository{
+public class TaskRepository implements ITaskRepository {
 
 
     private final JdbcTemplate jdbcTemplate;
@@ -30,19 +31,28 @@ public class TaskRepository implements ITaskRepository{
 
     @Override
     public Optional<Task> findTaskById(Long id) {
-        List<Task> result = jdbcTemplate.query("select * from task where id = ?", taskRowMapper(),id);
+        List<Task> result = jdbcTemplate.query("select * from task where id = ?", taskRowMapper(), id);
         return result.stream().findAny();
     }
 
     @Override
     public Task findTaskByIdOrElseThrow(Long id) {
-        List<Task> result = jdbcTemplate.query("select * from task where id = ?", taskRowMapper(),id);
-        return result.stream().findAny().orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        List<Task> result = jdbcTemplate.query("select * from task where id = ?", taskRowMapper(), id);
+        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @Override
     public List<Task> findTaskAll() {
         return jdbcTemplate.query("select * from task", taskRowMapper());
+    }
+
+    @Override
+    public List<Task> findTaskByPage(Long page, Long id) {
+        int limit = 5;
+        Long offset = (page - 1) * limit;
+        String query = "SELECT * FROM task WHERE authorId = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(query, taskRowMapper(), id, limit, offset);
+
     }
 
 
@@ -54,8 +64,8 @@ public class TaskRepository implements ITaskRepository{
         parameters.put("authorId", task.getAuthorId());
         parameters.put("taskName", task.getTaskName());
         parameters.put("password", task.getPassword());
-        LocalDate created_at  = LocalDate.now();
-        LocalDate updated_at  = LocalDate.now();
+        LocalDate created_at = LocalDate.now();
+        LocalDate updated_at = LocalDate.now();
         parameters.put("created_at", created_at);
         parameters.put("updated_at", updated_at);
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
@@ -66,9 +76,8 @@ public class TaskRepository implements ITaskRepository{
     @Override
     public int updateTaskName(Long id, String taskName) {
         LocalDate update_at = LocalDate.now();
-        return jdbcTemplate.update("UPDATE task SET taskName = ?, updated_at = ? WHERE id = ?", taskName, update_at ,id);
+        return jdbcTemplate.update("UPDATE task SET taskName = ?, updated_at = ? WHERE id = ?", taskName, update_at, id);
     }
-
 
 
     @Override
@@ -78,7 +87,7 @@ public class TaskRepository implements ITaskRepository{
     }
 
 
-    private RowMapper<Task> taskRowMapper(){
+    private RowMapper<Task> taskRowMapper() {
         return new RowMapper<Task>() {
             @Override
             public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
