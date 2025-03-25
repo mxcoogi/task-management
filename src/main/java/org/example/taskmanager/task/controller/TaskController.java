@@ -5,6 +5,7 @@ import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.service.ITaskService;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,20 +49,20 @@ public class TaskController {
 
     /**
      * authorEmail
-     *
+     * @deprecated
      * @param dto authorName, updated_at
      * @return List<TaskResponseDto>
      */
-    @GetMapping
-    public ResponseEntity<List<TaskResponseDto>> findTaskAll(
-            @RequestBody TaskRequestDto dto
-    ) {
-        return new ResponseEntity<>(taskService.findTaskAll(dto), HttpStatus.OK);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<TaskResponseDto>> findTaskAll(
+//            @RequestBody TaskRequestDto dto
+//    ) {
+//        return new ResponseEntity<>(taskService.findTaskAll(dto), HttpStatus.OK);
+//    }
 
-    @GetMapping("/page={page}")
+    @GetMapping
     public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
-            @PathVariable Long page,
+            @RequestParam Long page,
             @RequestBody AuthorRequestDto dto
     ){
         return new ResponseEntity<>(taskService.findTaskByPage(page,dto.getEmail()), HttpStatus.OK);
