@@ -67,7 +67,12 @@ public class TaskController {
     }
 
 
-
+    /**
+     *
+     * @param id
+     * @param dto email, password
+     * @return
+     */
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTaskName(
             @PathVariable Long id,

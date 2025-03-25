@@ -50,7 +50,6 @@ public class TaskService implements ITaskService {
     }
 
 
-
     @Override
     public List<TaskResponseDto> findTaskAll(TaskRequestDto dto) {
         //요청값 가져오기
@@ -83,42 +82,36 @@ public class TaskService implements ITaskService {
 
         String updateTaskName = dto.getTaskName();
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        if(!validPassword(task.getPassword(), dto.getPassword())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-        if(updateTaskName == null){
+        if (updateTaskName == null) {
             updateTaskName = task.getTaskName();
         }
+        Author author = authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword())
 
         int row = taskRepository.updateTaskName(task.getId(), updateTaskName);
 
-        if(row == 0){
+        if (row == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id));
-
+        return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id),author.getName());
     }
 
 
     @Override
     public void deleteTask(Long id, TaskRequestDto dto) {
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        if(!validPassword(task.getPassword(), dto.getPassword())){
+        if (!validPassword(task.getPassword(), dto.getPassword())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         int row = taskRepository.deleteTask(id);
-        if(row == 0){
+        if (row == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
-    private TaskResponseDto toResponseDto(Task task, String authorName){
+    private TaskResponseDto toResponseDto(Task task, String authorName) {
 
-        return new TaskResponseDto(task.getId(), task.getTaskName(), authorName ,task.getAuthorEmail(), task.getCreated_at(), task.getUpdated_at());
+        return new TaskResponseDto(task.getId(), task.getTaskName(), authorName, task.getAuthorEmail(), task.getCreated_at(), task.getUpdated_at());
     }
-
-
-
 
 
 }
