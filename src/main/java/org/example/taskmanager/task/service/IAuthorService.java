@@ -1,0 +1,10 @@
+package org.example.taskmanager.task.service;
+
+import org.example.taskmanager.task.dto.AuthorRequestDto;
+import org.example.taskmanager.task.dto.AuthorResponseDto;
+import org.springframework.http.ResponseEntity;
+
+public interface IAuthorService {
+
+    AuthorResponseDto createAuthor(AuthorRequestDto dto);
+}
