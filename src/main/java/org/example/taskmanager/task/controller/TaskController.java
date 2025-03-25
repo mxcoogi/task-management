@@ -30,7 +30,7 @@ public class TaskController {
     public ResponseEntity<TaskResponseDto> createTask(
             @RequestBody TaskRequestDto dto
     ) {
-        return new ResponseEntity<>(taskService.saveTask(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(taskService.createTask(dto), HttpStatus.CREATED);
     }
 
     /**

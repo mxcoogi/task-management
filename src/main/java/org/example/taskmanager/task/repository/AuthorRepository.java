@@ -55,6 +55,16 @@ public class AuthorRepository implements IAuthorRepository {
         return jdbcTemplate.queryForObject("select id from author where email = ?", Long.class, email);
     }
 
+    @Override
+    public Author vertifyAuthorByEmailPassword(String email, String password){
+        Author author = jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email)
+                .stream().findAny().orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 이메일"));
+        if(!author.getPassword().equals(password)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "비밀번호가 틀림");
+        }
+        return author;
+    }
+
 
     @Override
     public Optional<Author> getAuthor(String email) {
@@ -76,6 +86,7 @@ public class AuthorRepository implements IAuthorRepository {
                         rs.getLong("id"),
                         rs.getString("email"),
                         rs.getString("name"),
+                        rs.getString("password"),
                         rs.getDate("created_at").toLocalDate(),
                         rs.getDate("created_at").toLocalDate()
                 );

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ITaskService {
 
-    TaskResponseDto saveTask(TaskRequestDto dto);
+    TaskResponseDto createTask(TaskRequestDto dto);
     TaskResponseDto findTaskById(Long id);
     TaskResponseDto findTaskByIdOrElseThrow(Long id);
     List<TaskResponseDto> findTaskAll(TaskRequestDto dto);

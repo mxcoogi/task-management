@@ -32,20 +32,14 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public TaskResponseDto saveTask(TaskRequestDto dto) {
-        //logic 작성
-        //email로 작성자 테이블 확인 후 save
-        Long authorId;
-        Optional<Author> author = authorRepository.getAuthor(dto.getAuthorEmail());
-        if(author.isEmpty()){
-            AuthorResponseDto authorResponseDto = authorRepository.saveAuthor(dto.getAuthorEmail(), dto.getAuthorName());
-            authorId = authorResponseDto.getId();
-        }else{
-            authorId = author.get().getId();
-        }
+    public TaskResponseDto createTask(TaskRequestDto dto) {
 
-        Task task = new Task(dto.getTaskName(), dto.getPassword(), authorId);
-        return taskRepository.saveTask(task);
+        //이메일 비밀번호 검증
+        String email = dto.getAuthorEmail();
+        String password = dto.getAuthorPassword();
+        Author author = authorRepository.vertifyAuthorByEmailPassword(email, password);
+        dto.setAuthorName(author.getName());
+        return taskRepository.saveTask(dto);
     }
 
     @Override
@@ -164,10 +158,6 @@ public class TaskService implements ITaskService {
         return new TaskResponseDto(task.getId(), task.getTaskName(), task.getAuthorId(), task.getCreated_at(), task.getUpdated_at());
     }
 
-    private boolean validPassword(String taskPassword, String dtoPassword){
-        if(dtoPassword == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        return taskPassword.equals(dtoPassword);
-    }
 
 
 
