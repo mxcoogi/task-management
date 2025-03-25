@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface IAuthorRepository {
 
-    AuthorResponseDto saveAuthor(String email, String name);
+    Author saveAuthor(String email, String password, String name);
     Optional<Author> getAuthor(String email);
     int updateAuthorName(String email, String name);
 }

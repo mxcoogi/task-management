@@ -1,7 +1,13 @@
 package org.example.taskmanager.task.controller;
 
 
+import org.example.taskmanager.task.dto.AuthorRequestDto;
+import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.service.IAuthorService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +19,12 @@ public class AuthorController {
 
     public AuthorController(IAuthorService authorService) {
         this.authorService = authorService;
+    }
+
+    @PostMapping
+    public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody AuthorRequestDto dto){
+
+        return new ResponseEntity<>(authorService.createAuthor(dto), HttpStatus.CREATED);
     }
 
 
