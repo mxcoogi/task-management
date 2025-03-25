@@ -85,7 +85,7 @@ public class TaskService implements ITaskService {
         if (updateTaskName == null) {
             updateTaskName = task.getTaskName();
         }
-        Author author = authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword())
+        Author author = authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
 
         int row = taskRepository.updateTaskName(task.getId(), updateTaskName);
 
@@ -98,14 +98,10 @@ public class TaskService implements ITaskService {
 
     @Override
     public void deleteTask(Long id, TaskRequestDto dto) {
+        authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        if (!validPassword(task.getPassword(), dto.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-        int row = taskRepository.deleteTask(id);
-        if (row == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        taskRepository.deleteTask(id);
+
     }
 
     private TaskResponseDto toResponseDto(Task task, String authorName) {

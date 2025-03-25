@@ -70,7 +70,7 @@ public class TaskController {
     /**
      *
      * @param id
-     * @param dto email, password
+     * @param dto email, password, taskName
      * @return
      */
     @PutMapping("/{id}")
@@ -82,7 +82,12 @@ public class TaskController {
     }
 
 
-
+    /**
+     *
+     * @param id
+     * @param dto email, password
+     * @return
+     */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTask(
             @PathVariable Long id,
