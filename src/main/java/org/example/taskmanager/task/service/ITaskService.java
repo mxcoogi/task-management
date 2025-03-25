@@ -9,12 +9,10 @@ import java.util.List;
 
 public interface ITaskService {
 
-    TaskResponseDto saveTask(TaskRequestDto dto);
-    TaskResponseDto findTaskById(Long id);
+    TaskResponseDto createTask(TaskRequestDto dto);
     TaskResponseDto findTaskByIdOrElseThrow(Long id);
     List<TaskResponseDto> findTaskAll(TaskRequestDto dto);
     void deleteTask(Long id, TaskRequestDto dto);
     TaskResponseDto updateTaskName(Long id, TaskRequestDto dto);
-    AuthorResponseDto updateAuthorName(AuthorRequestDto dto);
     List<TaskResponseDto> findTaskByPage(Long page, String email);
 }

@@ -7,18 +7,12 @@ import java.time.LocalDate;
 
 
 @Getter
+@AllArgsConstructor
 public class TaskResponseDto {
     private Long id;
     private String taskName;
-    private Long authorId;
+    private String authorName;
+    private String authorEmail;
     private LocalDate created_at;
     private LocalDate updated_at;
-
-    public TaskResponseDto(Long id, String taskName, Long authorId, LocalDate created_at, LocalDate updated_at){
-        this.id = id;
-        this.taskName = taskName;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.authorId = authorId;
-    }
 }

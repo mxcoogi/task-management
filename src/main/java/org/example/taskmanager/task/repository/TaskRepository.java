@@ -1,5 +1,6 @@
 package org.example.taskmanager.task.repository;
 
+import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.entity.Task;
 import org.springframework.http.HttpStatus;
@@ -45,32 +46,31 @@ public class TaskRepository implements ITaskRepository {
     public List<Task> findTaskAll() {
         return jdbcTemplate.query("select * from task", taskRowMapper());
     }
-
     @Override
-    public List<Task> findTaskByPage(Long page, Long id) {
+    public List<Task> findTaskByPage(Long page, String email) {
         int limit = 5;
         Long offset = (page - 1) * limit;
-        String query = "SELECT * FROM task WHERE authorId = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(query, taskRowMapper(), id, limit, offset);
+        String query = "SELECT * FROM task WHERE authorEmail = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(query, taskRowMapper(), email, limit, offset);
 
     }
 
 
     @Override
-    public TaskResponseDto saveTask(Task task) {
+    public TaskResponseDto saveTask(TaskRequestDto dto) {
+
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("task").usingGeneratedKeyColumns("id");
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("authorId", task.getAuthorId());
-        parameters.put("taskName", task.getTaskName());
-        parameters.put("password", task.getPassword());
+        parameters.put("authorEmail", dto.getAuthorEmail());
+        parameters.put("taskName", dto.getTaskName());
         LocalDate created_at = LocalDate.now();
         LocalDate updated_at = LocalDate.now();
         parameters.put("created_at", created_at);
         parameters.put("updated_at", updated_at);
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
-        return new TaskResponseDto(key.longValue(), task.getTaskName(), task.getAuthorId(), created_at, updated_at);
+        return new TaskResponseDto(key.longValue(), dto.getTaskName(), dto.getAuthorName(), dto.getAuthorEmail(), created_at, updated_at);
     }
 
     @Override
@@ -95,8 +95,7 @@ public class TaskRepository implements ITaskRepository {
                 return new Task(
                         rs.getLong("id"),
                         rs.getString("taskName"),
-                        rs.getLong("authorId"),
-                        rs.getString("password"),
+                        rs.getString("authorEmail"),
                         rs.getDate("created_at").toLocalDate(),
                         rs.getDate("updated_at").toLocalDate()
                 );

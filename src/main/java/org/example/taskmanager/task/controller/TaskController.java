@@ -23,14 +23,14 @@ public class TaskController {
 
 
     /**
-     * @param dto TaskRequestDto
+     * @param dto TaskRequestDto authorEmail, taskName, authorPassword
      * @return TaskResponseDto, HttpStatus
      */
     @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(
             @RequestBody TaskRequestDto dto
     ) {
-        return new ResponseEntity<>(taskService.saveTask(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(taskService.createTask(dto), HttpStatus.CREATED);
     }
 
     /**
@@ -47,7 +47,7 @@ public class TaskController {
     }
 
     /**
-     * authorName, updated_at 으로 task 전체 조회
+     * authorEmail
      *
      * @param dto authorName, updated_at
      * @return List<TaskResponseDto>
@@ -58,16 +58,22 @@ public class TaskController {
     ) {
         return new ResponseEntity<>(taskService.findTaskAll(dto), HttpStatus.OK);
     }
-    @GetMapping("/page/{page}")
+
+    @GetMapping("/page={page}")
     public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
             @PathVariable Long page,
             @RequestBody AuthorRequestDto dto
     ){
-        return new ResponseEntity<>(taskService.findTaskByPage(page, dto.getEmail()), HttpStatus.OK);
+        return new ResponseEntity<>(taskService.findTaskByPage(page,dto.getEmail()), HttpStatus.OK);
     }
 
 
-
+    /**
+     *
+     * @param id
+     * @param dto email, password, taskName
+     * @return
+     */
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTaskName(
             @PathVariable Long id,
@@ -76,15 +82,14 @@ public class TaskController {
         return new ResponseEntity<>(taskService.updateTaskName(id, dto), HttpStatus.OK);
     }
 
-    @PutMapping("/author")
-    public ResponseEntity<AuthorResponseDto> updateAuthorName(
-            @RequestBody AuthorRequestDto dto //email 과 name 이 들어간 dto
-    ) {
-        return new ResponseEntity<>(taskService.updateAuthorName(dto), HttpStatus.OK);
-    }
 
-
-    @DeleteMapping("/delete/{id}")
+    /**
+     *
+     * @param id
+     * @param dto email, password
+     * @return
+     */
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(
             @PathVariable Long id,
             @RequestBody TaskRequestDto dto

@@ -32,41 +32,21 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public TaskResponseDto saveTask(TaskRequestDto dto) {
-        //logic 작성
-        //email로 작성자 테이블 확인 후 save
-        Long authorId;
-        Optional<Author> author = authorRepository.getAuthor(dto.getAuthorEmail());
-        if(author.isEmpty()){
-            AuthorResponseDto authorResponseDto = authorRepository.saveAuthor(dto.getAuthorEmail(), dto.getAuthorName());
-            authorId = authorResponseDto.getId();
-        }else{
-            authorId = author.get().getId();
-        }
+    public TaskResponseDto createTask(TaskRequestDto dto) {
 
-        Task task = new Task(dto.getTaskName(), dto.getPassword(), authorId);
-        return taskRepository.saveTask(task);
+        //이메일 비밀번호 검증
+        String email = dto.getAuthorEmail();
+        String password = dto.getAuthorPassword();
+        Author author = authorRepository.vertifyAuthorByEmailPassword(email, password);
+        dto.setAuthorName(author.getName());
+        return taskRepository.saveTask(dto);
     }
 
     @Override
     public TaskResponseDto findTaskByIdOrElseThrow(Long id) {
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        return toResponseDto(task);
-    }
-    /**
-     *
-     * @param id 작업 식별자
-     * @deprecated
-     * @return TaskResponseDto
-     */
-    @Override
-    public TaskResponseDto findTaskById(Long id) {
-        Optional<Task> taskById = taskRepository.findTaskById(id);
-        if(taskById.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Task task = taskById.get();
-        return toResponseDto(task);
+        Author author = authorRepository.getAuthor(task.getAuthorEmail());
+        return toResponseDto(task, author.getName());
     }
 
 
@@ -74,35 +54,24 @@ public class TaskService implements ITaskService {
     public List<TaskResponseDto> findTaskAll(TaskRequestDto dto) {
         //요청값 가져오기
         String authorEmail = dto.getAuthorEmail();
-        LocalDate updated_at = dto.getUpdated_at();
 
+        //레포에서 작성자 정보 가져오기
+        Author author = authorRepository.getAuthor(authorEmail);
         //레포에서 리스트 가져오기
         List<Task> allTask = taskRepository.findTaskAll();
-        Optional<Author> author = authorRepository.getAuthor(authorEmail); //id가 null값이면..? 그냥 무시하고 조회한다
-        Long authorId;
-        if(author.isEmpty()){
-            authorId = null;
-        }else{
-            authorId = author.get().getId();
-        }
         //비교 및 대입
         List<TaskResponseDto> result;
         result = allTask.stream()
-                .filter(s-> updated_at==null || updated_at.equals("")|| updated_at.isEqual(s.getUpdated_at())) //1번 필터
-                .filter(s -> authorId == null || authorId.equals(s.getAuthorId())) //2번 필터
-                .map(this::toResponseDto).toList();
+                .filter(s -> authorEmail == null || authorEmail.equals(s.getAuthorEmail())) //2번 필터
+                .map((Task task) -> toResponseDto(task, author.getName())).toList();
         return result;
     }
 
     @Override
     public List<TaskResponseDto> findTaskByPage(Long page, String email) {
-        Optional<Author> author = authorRepository.getAuthor(email); //id가 null값이면..? 그냥 무시하고 조회한다
-        if(author.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Long id = author.get().getId();
-        List<Task> taskList = taskRepository.findTaskByPage(page, id);
-        return taskList.stream().map(this::toResponseDto).toList();
+        Author author = authorRepository.getAuthor(email); //id가 null값이면..? 그냥 무시하고 조회한다
+        List<Task> taskList = taskRepository.findTaskByPage(page, email);
+        return taskList.stream().map((Task task) -> toResponseDto(task, author.getName())).toList();
     }
 
 
@@ -112,64 +81,32 @@ public class TaskService implements ITaskService {
 
         String updateTaskName = dto.getTaskName();
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        if(!validPassword(task.getPassword(), dto.getPassword())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-        if(updateTaskName == null){
+        if (updateTaskName == null) {
             updateTaskName = task.getTaskName();
         }
+        Author author = authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
 
         int row = taskRepository.updateTaskName(task.getId(), updateTaskName);
 
-        if(row == 0){
+        if (row == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id));
-
+        return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id),author.getName());
     }
-
-    @Override
-    public AuthorResponseDto updateAuthorName(AuthorRequestDto dto){
-        String email = dto.getEmail();
-        String name = dto.getName();
-        int row = authorRepository.updateAuthorName(email, name);
-        if(row == 0){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Optional<Author> author = authorRepository.getAuthor(email);
-        if(author.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Author responseAuthor = author.get();
-        return new AuthorResponseDto(responseAuthor.getId(), responseAuthor.getName(), responseAuthor.getEmail(), responseAuthor.getCreated_at(), responseAuthor.getUpdated_at());
-    }
-
-
 
 
     @Override
     public void deleteTask(Long id, TaskRequestDto dto) {
+        authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        if(!validPassword(task.getPassword(), dto.getPassword())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-        int row = taskRepository.deleteTask(id);
-        if(row == 0){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        taskRepository.deleteTask(id);
+
     }
 
-    private TaskResponseDto toResponseDto(Task task){
+    private TaskResponseDto toResponseDto(Task task, String authorName) {
 
-        return new TaskResponseDto(task.getId(), task.getTaskName(), task.getAuthorId(), task.getCreated_at(), task.getUpdated_at());
+        return new TaskResponseDto(task.getId(), task.getTaskName(), authorName, task.getAuthorEmail(), task.getCreated_at(), task.getUpdated_at());
     }
-
-    private boolean validPassword(String taskPassword, String dtoPassword){
-        if(dtoPassword == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        return taskPassword.equals(dtoPassword);
-    }
-
-
 
 
 }
