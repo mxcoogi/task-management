@@ -48,21 +48,7 @@ public class TaskService implements ITaskService {
         Author author = authorRepository.getAuthor(task.getAuthorEmail());
         return toResponseDto(task, author.getName());
     }
-    /**
-     *
-     * @param id 작업 식별자
-     * @deprecated
-     * @return TaskResponseDto
-     */
-    @Override
-    public TaskResponseDto findTaskById(Long id) {
-        Optional<Task> taskById = taskRepository.findTaskById(id);
-        if(taskById.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Task task = taskById.get();
-        return toResponseDto(task);
-    }
+
 
 
     @Override

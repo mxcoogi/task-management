@@ -10,7 +10,6 @@ import java.util.List;
 public interface ITaskService {
 
     TaskResponseDto createTask(TaskRequestDto dto);
-    TaskResponseDto findTaskById(Long id);
     TaskResponseDto findTaskByIdOrElseThrow(Long id);
     List<TaskResponseDto> findTaskAll(TaskRequestDto dto);
     void deleteTask(Long id, TaskRequestDto dto);
