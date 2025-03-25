@@ -70,8 +70,7 @@ public class TaskService implements ITaskService {
     @Override
     public List<TaskResponseDto> findTaskByPage(Long page, String email) {
         Author author = authorRepository.getAuthor(email); //id가 null값이면..? 그냥 무시하고 조회한다
-        Long id = author.getId();
-        List<Task> taskList = taskRepository.findTaskByPage(page, id);
+        List<Task> taskList = taskRepository.findTaskByPage(page, email);
         return taskList.stream().map((Task task) -> toResponseDto(task, author.getName())).toList();
     }
 

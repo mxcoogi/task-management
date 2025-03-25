@@ -23,7 +23,7 @@ public class TaskController {
 
 
     /**
-     * @param dto TaskRequestDto
+     * @param dto TaskRequestDto authorEmail, taskName, authorPassword
      * @return TaskResponseDto, HttpStatus
      */
     @PostMapping
@@ -47,7 +47,7 @@ public class TaskController {
     }
 
     /**
-     * authorName, updated_at 으로 task 전체 조회
+     * authorEmail
      *
      * @param dto authorName, updated_at
      * @return List<TaskResponseDto>
@@ -58,12 +58,13 @@ public class TaskController {
     ) {
         return new ResponseEntity<>(taskService.findTaskAll(dto), HttpStatus.OK);
     }
-    @GetMapping("/page/{page}")
+
+    @GetMapping("/page={page}")
     public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
             @PathVariable Long page,
             @RequestBody AuthorRequestDto dto
     ){
-        return new ResponseEntity<>(taskService.findTaskByPage(page, dto.getEmail()), HttpStatus.OK);
+        return new ResponseEntity<>(taskService.findTaskByPage(page,dto.getEmail()), HttpStatus.OK);
     }
 
 
@@ -88,7 +89,7 @@ public class TaskController {
      * @param dto email, password
      * @return
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(
             @PathVariable Long id,
             @RequestBody TaskRequestDto dto

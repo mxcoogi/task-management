@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/author")
+@RequestMapping("/authors")
 public class AuthorController {
 
     private final IAuthorService authorService;
@@ -18,12 +18,22 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
+    /**
+     *
+     * @param dto email, name, password
+     * @return
+     */
     @PostMapping
     public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody AuthorRequestDto dto){
 
         return new ResponseEntity<>(authorService.createAuthor(dto), HttpStatus.CREATED);
     }
 
+    /**
+     *
+     * @param dto email, password, name
+     * @return
+     */
     @PutMapping
     public ResponseEntity<AuthorResponseDto> updateAuthor(
             @RequestBody AuthorRequestDto dto

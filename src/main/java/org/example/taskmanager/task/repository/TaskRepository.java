@@ -47,11 +47,11 @@ public class TaskRepository implements ITaskRepository {
         return jdbcTemplate.query("select * from task", taskRowMapper());
     }
     @Override
-    public List<Task> findTaskByPage(Long page, Long id) {
+    public List<Task> findTaskByPage(Long page, String email) {
         int limit = 5;
         Long offset = (page - 1) * limit;
-        String query = "SELECT * FROM task WHERE authorId = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(query, taskRowMapper(), id, limit, offset);
+        String query = "SELECT * FROM task WHERE authorEmail = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(query, taskRowMapper(), email, limit, offset);
 
     }
 
