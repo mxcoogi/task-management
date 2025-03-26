@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -15,7 +14,7 @@ public class Task {
     private LocalDate created_at;
     private LocalDate updated_at;
 
-    public Task(Long id, String taskName, String email){
+    public Task(Long id, String taskName, String email) {
         this.taskName = taskName;
         this.authorEmail = email;
         this.id = id;

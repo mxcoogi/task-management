@@ -1,15 +1,13 @@
 package org.example.taskmanager.task.controller;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.example.taskmanager.task.dto.AuthorRequestDto;
 import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.service.ITaskService;
-
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +28,8 @@ public class TaskController {
 
 
     /**
+     * 작업 생성 API
+     *
      * @param dto TaskRequestDto authorEmail, taskName, authorPassword
      * @return TaskResponseDto, HttpStatus
      */
@@ -41,7 +41,7 @@ public class TaskController {
     }
 
     /**
-     * id값으로 task 단건 조회
+     * task 단건 조회 API
      *
      * @param id task 식별자
      * @return TaskResponseDto, HttpStatus
@@ -53,39 +53,28 @@ public class TaskController {
         return new ResponseEntity<>(taskService.findTaskByIdOrElseThrow(id), HttpStatus.OK);
     }
 
-//    /**
-//     * authorEmail
-//     * @deprecated
-//     * @param dto authorName, updated_at
-//     * @return List<TaskResponseDto>
-//     */
-//    @GetMapping
-//    public ResponseEntity<List<TaskResponseDto>> findTaskAll(
-//            @RequestBody TaskRequestDto dto
-//    ) {
-//        return new ResponseEntity<>(taskService.findTaskAll(dto), HttpStatus.OK);
-//    }
-
     /**
+     * 작성자의 게시물 전체조회
      *
-     * @param page
-     * @param authorEmail
-     * @return
+     * @param page        확인할 페이지 기본값 1
+     * @param authorEmail 게시물 소유자의 이메일
+     * @return List<TaskResponseDto> 작업 리스트
      */
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
             @RequestParam(value = "page", defaultValue = "1") @Positive Long page,
             @RequestParam(value = "authorEmail") @NotBlank @Email String authorEmail
-    ){
-        return new ResponseEntity<>(taskService.findTaskByPage(page,authorEmail), HttpStatus.OK);
+    ) {
+        return new ResponseEntity<>(taskService.findTaskByPage(page, authorEmail), HttpStatus.OK);
     }
 
 
     /**
+     * taskName 변경 API
      *
      * @param id
      * @param dto email, password, taskName
-     * @return
+     * @return TaskResponseDto
      */
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTaskName(
@@ -97,10 +86,11 @@ public class TaskController {
 
 
     /**
+     * task 삭제 API
      *
      * @param id
      * @param dto email, password
-     * @return
+     * @return HttpStatusCode
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(

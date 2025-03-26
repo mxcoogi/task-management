@@ -4,16 +4,15 @@ import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.entity.Author;
 import org.example.taskmanager.task.entity.Task;
-import org.example.taskmanager.task.exception.*;
+import org.example.taskmanager.task.exception.DeleteFailedException;
+import org.example.taskmanager.task.exception.InvalidEmailException;
+import org.example.taskmanager.task.exception.UpdateFailedException;
 import org.example.taskmanager.task.repository.IAuthorRepository;
 import org.example.taskmanager.task.repository.ITaskRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-
 
 
 @Service
@@ -47,23 +46,6 @@ public class TaskService implements ITaskService {
 
 
     @Override
-    public List<TaskResponseDto> findTaskAll(TaskRequestDto dto) {
-        //요청값 가져오기
-        String authorEmail = dto.getAuthorEmail();
-
-        //레포에서 작성자 정보 가져오기
-        Author author = authorRepository.getAuthor(authorEmail);
-        //레포에서 리스트 가져오기
-        List<Task> allTask = taskRepository.findTaskAll();
-        //비교 및 대입
-        List<TaskResponseDto> result;
-        result = allTask.stream()
-                .filter(s -> authorEmail == null || authorEmail.equals(s.getAuthorEmail())) //2번 필터
-                .map((Task task) -> toResponseDto(task, author.getName())).toList();
-        return result;
-    }
-
-    @Override
     public List<TaskResponseDto> findTaskByPage(Long page, String email) {
         Author author = authorRepository.getAuthor(email);
         List<Task> taskList = taskRepository.findTaskByPage(page, email);
@@ -80,7 +62,7 @@ public class TaskService implements ITaskService {
         if (updateTaskName == null) {
             updateTaskName = task.getTaskName();
         }
-        if(!task.getAuthorEmail().equals(dto.getAuthorEmail())){
+        if (!task.getAuthorEmail().equals(dto.getAuthorEmail())) {
             throw new InvalidEmailException();
         }
         Author author = authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
@@ -89,19 +71,20 @@ public class TaskService implements ITaskService {
         if (row == 0) {
             throw new UpdateFailedException();
         }
-        return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id),author.getName());
+        return toResponseDto(taskRepository.findTaskByIdOrElseThrow(id), author.getName());
     }
 
 
+    @Transactional
     @Override
     public void deleteTask(Long id, TaskRequestDto dto) {
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
-        if(!task.getAuthorEmail().equals(dto.getAuthorEmail())){
+        if (!task.getAuthorEmail().equals(dto.getAuthorEmail())) {
             throw new InvalidEmailException();
         }
         authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
         int row = taskRepository.deleteTask(id);
-        if(row == 0){
+        if (row == 0) {
             throw new DeleteFailedException();
         }
 

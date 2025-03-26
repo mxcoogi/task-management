@@ -31,3 +31,6 @@
 ![task_erd.png](image/task1.png)
 
 ### API 명세
+![taskAPI](image/taskAPI.png)
+![authorAPI](image/authorAPI.png)
+https://www.notion.so/1bc87841dba78043a012e4183b689159?v=1bc87841dba7804caa32000c68ab7756&pvs=4

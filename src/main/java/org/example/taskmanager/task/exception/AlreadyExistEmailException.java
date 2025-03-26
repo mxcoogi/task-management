@@ -12,6 +12,7 @@ public class AlreadyExistEmailException extends RuntimeException {
     public AlreadyExistEmailException() {
         super(MESSAGE);
     }
+
     public HttpStatus getStatus() {
         return STATUS;
     }

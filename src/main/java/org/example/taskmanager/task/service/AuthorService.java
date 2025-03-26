@@ -5,12 +5,11 @@ import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.entity.Author;
 import org.example.taskmanager.task.exception.EmailNotFoundException;
 import org.example.taskmanager.task.repository.IAuthorRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class AuthorService implements IAuthorService{
+public class AuthorService implements IAuthorService {
 
     private final IAuthorRepository authorRepository;
 
@@ -18,6 +17,7 @@ public class AuthorService implements IAuthorService{
         this.authorRepository = authorRepository;
     }
 
+    @Transactional
     @Override
     public AuthorResponseDto createAuthor(AuthorRequestDto dto) {
 
@@ -26,18 +26,19 @@ public class AuthorService implements IAuthorService{
         return toAuthorResponse(author);
     }
 
+    @Transactional
     @Override
     public AuthorResponseDto updateAuthor(AuthorRequestDto dto) {
         authorRepository.vertifyAuthorByEmailPassword(dto.getEmail(), dto.getPassword());
         int row = authorRepository.updateAuthorName(dto.getEmail(), dto.getName());
-        if(row == 0){
+        if (row == 0) {
             throw new EmailNotFoundException();
         }
         Author author = authorRepository.getAuthor(dto.getEmail());
         return toAuthorResponse(author);
     }
 
-    private AuthorResponseDto toAuthorResponse(Author author){
+    private AuthorResponseDto toAuthorResponse(Author author) {
         return new AuthorResponseDto(author.getId(), author.getName(), author.getEmail(), author.getCreated_at(), author.getUpdated_at());
     }
 

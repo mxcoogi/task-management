@@ -1,27 +1,22 @@
 package org.example.taskmanager.task.repository;
 
-import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.entity.Author;
 import org.example.taskmanager.task.exception.AlreadyExistEmailException;
 import org.example.taskmanager.task.exception.EmailNotFoundException;
 import org.example.taskmanager.task.exception.InvalidPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public class AuthorRepository implements IAuthorRepository {
@@ -61,10 +56,10 @@ public class AuthorRepository implements IAuthorRepository {
     }
 
     @Override
-    public Author vertifyAuthorByEmailPassword(String email, String password){
+    public Author vertifyAuthorByEmailPassword(String email, String password) {
         Author author = jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email)
-                .stream().findAny().orElseThrow(()->new EmailNotFoundException());
-        if(!author.getPassword().equals(password)){
+                .stream().findAny().orElseThrow(() -> new EmailNotFoundException());
+        if (!author.getPassword().equals(password)) {
             throw new InvalidPasswordException();
         }
         return author;
@@ -75,7 +70,7 @@ public class AuthorRepository implements IAuthorRepository {
     public Author getAuthor(String email) {
 
         return jdbcTemplate.query("select * from author where email = ?", authorRowMapper(), email)
-                    .stream().findAny().orElseThrow(()-> new EmailNotFoundException());
+                .stream().findAny().orElseThrow(() -> new EmailNotFoundException());
     }
 
     @Override

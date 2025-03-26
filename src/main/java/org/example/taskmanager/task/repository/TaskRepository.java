@@ -5,13 +5,11 @@ import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.entity.Task;
 import org.example.taskmanager.task.exception.TaskNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -20,7 +18,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public class TaskRepository implements ITaskRepository {
@@ -35,23 +32,13 @@ public class TaskRepository implements ITaskRepository {
     }
 
 
-
-    @Override
-    public Optional<Task> findTaskById(Long id) {
-        List<Task> result = jdbcTemplate.query("select * from task where id = ?", taskRowMapper(), id);
-        return result.stream().findAny();
-    }
-
     @Override
     public Task findTaskByIdOrElseThrow(Long id) {
         List<Task> result = jdbcTemplate.query("select * from task where id = ?", taskRowMapper(), id);
         return result.stream().findAny().orElseThrow(() -> new TaskNotFoundException());
     }
 
-    @Override
-    public List<Task> findTaskAll() {
-        return jdbcTemplate.query("select * from task", taskRowMapper());
-    }
+
     @Override
     public List<Task> findTaskByPage(Long page, String email) {
         Long offset = (page - 1) * LIMIT;
@@ -95,13 +82,7 @@ public class TaskRepository implements ITaskRepository {
             @Override
             public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-                return new Task(
-                        rs.getLong("id"),
-                        rs.getString("taskName"),
-                        rs.getString("authorEmail"),
-                        rs.getDate("created_at").toLocalDate(),
-                        rs.getDate("updated_at").toLocalDate()
-                );
+                return new Task(rs.getLong("id"), rs.getString("taskName"), rs.getString("authorEmail"), rs.getDate("created_at").toLocalDate(), rs.getDate("updated_at").toLocalDate());
             }
         };
     }

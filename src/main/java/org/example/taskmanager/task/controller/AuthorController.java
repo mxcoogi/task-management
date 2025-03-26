@@ -21,25 +21,27 @@ public class AuthorController {
 
     /**
      * 작성자 생성
+     *
      * @param dto email, password, name
-     * @return ResponseEntity
+     * @return AuthorResponseDto
      */
     @PostMapping
     public ResponseEntity<AuthorResponseDto> createAuthor(
             @RequestBody @Valid AuthorRequestDto dto
-            ){
+    ) {
         return new ResponseEntity<>(authorService.createAuthor(dto), HttpStatus.CREATED);
     }
 
     /**
      * 작성자 정보 업데이트
+     *
      * @param dto email, password, name
      * @return ResponseEntity
      */
     @PutMapping
     public ResponseEntity<AuthorResponseDto> updateAuthor(
             @RequestBody @Valid AuthorRequestDto dto
-    ){
+    ) {
         return new ResponseEntity<>(authorService.updateAuthor(dto), HttpStatus.OK);
     }
 

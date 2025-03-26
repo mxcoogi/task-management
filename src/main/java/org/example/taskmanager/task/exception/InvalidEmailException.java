@@ -11,7 +11,8 @@ public class InvalidEmailException extends RuntimeException {
     public InvalidEmailException() {
         super(MESSAGE);
     }
-    public HttpStatus getStatus(){
+
+    public HttpStatus getStatus() {
         return STATUS;
     }
 }
