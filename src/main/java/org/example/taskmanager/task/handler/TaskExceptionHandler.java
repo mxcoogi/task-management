@@ -3,10 +3,13 @@ package org.example.taskmanager.task.handler;
 import jakarta.validation.ConstraintViolationException;
 import org.example.taskmanager.task.dto.ErrorDto;
 import org.example.taskmanager.task.exception.*;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestValueException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -18,7 +21,7 @@ import java.util.Map;
 public class TaskExceptionHandler {
 
     @ExceptionHandler(AlreadyExistEmailException.class)
-    public ResponseEntity<ErrorDto> handleAlreadyExistEmailException(AlreadyExistEmailException ex){
+    public ResponseEntity<ErrorDto> handleAlreadyExistEmailException(AlreadyExistEmailException ex) {
         ErrorDto errorDto = new ErrorDto(ex.getMessage(), ex.getStatus());
         return new ResponseEntity<>(errorDto, ex.getStatus());
     }
@@ -69,6 +72,12 @@ public class TaskExceptionHandler {
         return new ResponseEntity<>(errorDto,errorDto.getHttpStatus());
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorDto> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex){
+        ErrorDto errorDto = new ErrorDto(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDto, errorDto.getHttpStatus());
+    }
+
 
     /**
      *
@@ -84,6 +93,14 @@ public class TaskExceptionHandler {
         }
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MissingRequestValueException.class)
+    public ResponseEntity<ErrorDto> handleMissingRequestValueException(MissingRequestValueException ex){
+        ErrorDto errorDto = new ErrorDto(ex.getMessage(), (HttpStatus) ex.getStatusCode());
+
+        return new ResponseEntity<>(errorDto, ex.getStatusCode());
+    }
+
 
 
 }

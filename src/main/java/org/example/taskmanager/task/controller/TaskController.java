@@ -1,4 +1,8 @@
 package org.example.taskmanager.task.controller;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.example.taskmanager.task.dto.AuthorRequestDto;
 import org.example.taskmanager.task.dto.TaskRequestDto;
@@ -31,7 +35,7 @@ public class TaskController {
      */
     @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(
-            @RequestBody TaskRequestDto dto
+            @RequestBody @Valid TaskRequestDto dto
     ) {
         return new ResponseEntity<>(taskService.createTask(dto), HttpStatus.CREATED);
     }
@@ -49,12 +53,12 @@ public class TaskController {
         return new ResponseEntity<>(taskService.findTaskByIdOrElseThrow(id), HttpStatus.OK);
     }
 
-    /**
-     * authorEmail
-     * @deprecated
-     * @param dto authorName, updated_at
-     * @return List<TaskResponseDto>
-     */
+//    /**
+//     * authorEmail
+//     * @deprecated
+//     * @param dto authorName, updated_at
+//     * @return List<TaskResponseDto>
+//     */
 //    @GetMapping
 //    public ResponseEntity<List<TaskResponseDto>> findTaskAll(
 //            @RequestBody TaskRequestDto dto
@@ -64,16 +68,16 @@ public class TaskController {
 
     /**
      *
-     * @param page 볼 페이지
-     * @param dto 조회할 작성자 이메일
-     * @return List<TaskResponseDto>
+     * @param page
+     * @param authorEmail
+     * @return
      */
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
-            @RequestParam(value = "page", defaultValue = "1") Long page,
-            @RequestBody AuthorRequestDto dto
+            @RequestParam(value = "page", defaultValue = "1") @Positive Long page,
+            @RequestParam(value = "authorEmail") @NotBlank @Email String authorEmail
     ){
-        return new ResponseEntity<>(taskService.findTaskByPage(page,dto.getEmail()), HttpStatus.OK);
+        return new ResponseEntity<>(taskService.findTaskByPage(page,authorEmail), HttpStatus.OK);
     }
 
 
@@ -85,8 +89,8 @@ public class TaskController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTaskName(
-            @PathVariable Long id,
-            @RequestBody TaskRequestDto dto
+            @PathVariable @Positive @NotNull Long id,
+            @RequestBody @Valid TaskRequestDto dto
     ) {
         return new ResponseEntity<>(taskService.updateTaskName(id, dto), HttpStatus.OK);
     }
@@ -100,8 +104,8 @@ public class TaskController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(
-            @PathVariable Long id,
-            @RequestBody TaskRequestDto dto
+            @PathVariable @Positive @NotNull Long id,
+            @RequestBody @Valid TaskRequestDto dto
     ) {
         taskService.deleteTask(id, dto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

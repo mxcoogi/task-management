@@ -10,6 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AuthorRequestDto {
     @Email
+    @NotBlank
     private String email;
     @NotBlank
     private String name;

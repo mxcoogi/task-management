@@ -35,8 +35,7 @@ public class TaskService implements ITaskService {
         String email = dto.getAuthorEmail();
         String password = dto.getAuthorPassword();
         Author author = authorRepository.vertifyAuthorByEmailPassword(email, password);
-        dto.setAuthorName(author.getName());
-        return taskRepository.saveTask(dto);
+        return taskRepository.saveTask(dto, author.getName());
     }
 
     @Override

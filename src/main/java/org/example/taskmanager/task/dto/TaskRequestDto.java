@@ -1,6 +1,8 @@
 package org.example.taskmanager.task.dto;
 
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,13 +12,12 @@ import java.time.LocalDate;
 @Getter
 public class TaskRequestDto {
 
-    private Long id;
+    @NotBlank
     private String taskName;
-    @Setter
-    private String authorName;
+    @Email
+    @NotBlank
     private String authorEmail;
+    @NotBlank
     private String authorPassword;
-    private LocalDate created_at;
-    private LocalDate updated_at;
 
 }

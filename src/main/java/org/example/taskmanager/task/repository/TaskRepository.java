@@ -61,7 +61,7 @@ public class TaskRepository implements ITaskRepository {
 
 
     @Override
-    public TaskResponseDto saveTask(TaskRequestDto dto) {
+    public TaskResponseDto saveTask(TaskRequestDto dto, String authorName) {
 
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("task").usingGeneratedKeyColumns("id");
@@ -74,7 +74,7 @@ public class TaskRepository implements ITaskRepository {
         parameters.put("updated_at", updated_at);
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
-        return new TaskResponseDto(key.longValue(), dto.getTaskName(), dto.getAuthorName(), dto.getAuthorEmail(), created_at, updated_at);
+        return new TaskResponseDto(key.longValue(), dto.getTaskName(), authorName, dto.getAuthorEmail(), created_at, updated_at);
     }
 
     @Override
