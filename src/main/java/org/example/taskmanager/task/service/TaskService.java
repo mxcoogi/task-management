@@ -4,10 +4,7 @@ import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.entity.Author;
 import org.example.taskmanager.task.entity.Task;
-import org.example.taskmanager.task.exception.DeleteFailedException;
-import org.example.taskmanager.task.exception.EmailNotFoundException;
-import org.example.taskmanager.task.exception.TaskNotFoundException;
-import org.example.taskmanager.task.exception.UpdateFailedException;
+import org.example.taskmanager.task.exception.*;
 import org.example.taskmanager.task.repository.IAuthorRepository;
 import org.example.taskmanager.task.repository.ITaskRepository;
 import org.springframework.http.HttpStatus;
@@ -69,7 +66,7 @@ public class TaskService implements ITaskService {
 
     @Override
     public List<TaskResponseDto> findTaskByPage(Long page, String email) {
-        Author author = authorRepository.getAuthor(email); //id가 null값이면..? 그냥 무시하고 조회한다
+        Author author = authorRepository.getAuthor(email);
         List<Task> taskList = taskRepository.findTaskByPage(page, email);
         return taskList.stream().map((Task task) -> toResponseDto(task, author.getName())).toList();
     }
@@ -84,6 +81,9 @@ public class TaskService implements ITaskService {
         if (updateTaskName == null) {
             updateTaskName = task.getTaskName();
         }
+        if(!task.getAuthorEmail().equals(dto.getAuthorEmail())){
+            throw new InvalidEmailException();
+        }
         Author author = authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
 
         int row = taskRepository.updateTaskName(task.getId(), updateTaskName);
@@ -96,8 +96,11 @@ public class TaskService implements ITaskService {
 
     @Override
     public void deleteTask(Long id, TaskRequestDto dto) {
-        authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
         Task task = taskRepository.findTaskByIdOrElseThrow(id);
+        if(!task.getAuthorEmail().equals(dto.getAuthorEmail())){
+            throw new InvalidEmailException();
+        }
+        authorRepository.vertifyAuthorByEmailPassword(dto.getAuthorEmail(), dto.getAuthorPassword());
         int row = taskRepository.deleteTask(id);
         if(row == 0){
             throw new DeleteFailedException();

@@ -22,6 +22,7 @@
 - 선택 일정 조회
 - 선택 일정 수정
 - 선택 일정 삭제
+- 전체 일정 조회(페이지)
 
 ---
 
@@ -30,5 +31,3 @@
 ![task_erd.png](image/task1.png)
 
 ### API 명세
-https://www.notion.so/1bc87841dba78043a012e4183b689159?v=1bc87841dba7804caa32000c68ab7756&pvs=4
-![task_api](image/task2.png)

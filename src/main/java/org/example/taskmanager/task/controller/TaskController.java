@@ -1,17 +1,19 @@
 package org.example.taskmanager.task.controller;
-
+import jakarta.validation.constraints.Positive;
 import org.example.taskmanager.task.dto.AuthorRequestDto;
-import org.example.taskmanager.task.dto.AuthorResponseDto;
 import org.example.taskmanager.task.dto.TaskRequestDto;
 import org.example.taskmanager.task.dto.TaskResponseDto;
 import org.example.taskmanager.task.service.ITaskService;
-import org.springframework.data.repository.query.Param;
+
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
@@ -42,7 +44,7 @@ public class TaskController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> findTask(
-            @PathVariable Long id
+            @Positive @PathVariable Long id
     ) {
         return new ResponseEntity<>(taskService.findTaskByIdOrElseThrow(id), HttpStatus.OK);
     }
@@ -68,7 +70,7 @@ public class TaskController {
      */
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> findTaskByPage(
-            @RequestParam Long page,
+            @RequestParam(value = "page", defaultValue = "1") Long page,
             @RequestBody AuthorRequestDto dto
     ){
         return new ResponseEntity<>(taskService.findTaskByPage(page,dto.getEmail()), HttpStatus.OK);
